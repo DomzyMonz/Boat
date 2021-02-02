@@ -1,0 +1,16 @@
+          setting_emb = discord.Embed(
+            title = 'Settings',
+            description = 'Toggle by reacting using the corresponding emojis.'
+          )
+          setting_emb.add_field(
+            name = '🔈Mute🔈',
+            value = 'Mute\'s the user.\n'\
+            f'Mute Status: {ch_mute if message.channel == ctx.channel else dm_mute}',
+            inline = True
+          )
+          setting_emb.add_field(
+            name = '🔚End🔚',
+            value = 'Ends Call (Can only end if both parties are unmuted)\n'\
+            f'Can end: {True if ch_mute == False and dm_mute == False else False}',
+            inline = True
+          )

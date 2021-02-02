@@ -9,7 +9,7 @@ app = Flask('')
 
 @app.route('/')
 def main():
-    return "wow so fast pavel"
+    return "lorem ipsum"
 
 
 def run():

@@ -6,11 +6,11 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-discord = "^1.0.1"
 flask = "^1.1.2"
 replit = "^2.0.0"
 apscheduler = "^3.6.3"
 psutil = "^5.8.0"
+discord = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 
