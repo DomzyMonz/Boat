@@ -11,6 +11,11 @@ replit = "^2.0.0"
 apscheduler = "^3.6.3"
 psutil = "^5.8.0"
 discord = "^1.0.1"
+xboxapi = "^2.0.1"
+youtube-dl = "^2021.1.24"
+aiocron = "^1.3"
+mcstatus = "^5.1.1"
+pil-compat = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 

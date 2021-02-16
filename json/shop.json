@@ -1,0 +1,18 @@
+{
+  "fishing_hook": {
+    "name": "Fishing Hook",
+    "lore": "A mystical hook from the depths of the seven seas!",
+    "emoji": 808704638874026025,
+    "price": 5,
+    "stack": 1,
+    "rarity": 0
+  },
+  "sail_cloth": {
+    "name": "Sail Cloth",
+    "lore": "Cloth with the strength of sails from pirate ships!",
+    "emoji": 808704638874026025,
+    "price": 16,
+    "stack": 1,
+    "rarity": 2
+  }
+}
