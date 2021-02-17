@@ -261,12 +261,26 @@ class Test(commands.Cog):
       cooldown["last"] = str(datetime.datetime.now())
       with open('json/cooldown.json', 'w') as f:
         json.dump(cooldown, f)
+
+  @commands.command()
+  async def test7(self, ctx):
+    command_list = []
+    for command in self.bot.commands:
+      command_list.append(str(command))
+      for alias in command.aliases:
+        command_list.append(str(alias))
+    await ctx.send(command_list)
+
+  @commands.command()
+  async def test8(self, ctx, a, b, c:str=None):
+    pass
   
   @tasks.loop(seconds=60)
   async def colour_change():
     with open('json/cooldown.json') as (f):
       cooldown = json.load(f)
     print ((datetime.datetime.now() - datetime.datetime.strptime(cooldown["last"], '%Y-%m-%d %H:%M:%S.%f')))
+
     
 def setup(client):
   client.add_cog(Test(client))

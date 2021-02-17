@@ -45,10 +45,10 @@ class Info(commands.Cog):
         f' **- Users** : {len(list(filter(lambda m: not m.bot, ctx.guild.members)))}\n'\
         f' **- Bots** : {len(list(filter(lambda m: m.bot, ctx.guild.members)))}\n'\
         f'**Status** =\n'\
-        f' **- :green_circle: Online : ** {statuses[0]}\n'\
-        f' **- :crescent_moon: Idle : ** {statuses[1]}\n'\
-        f' **- :o: Do Not Disturb : ** {statuses[2]}\n'\
-        f' **- :radio_button: Offline : ** {statuses[3]}\n'\
+        f' **- <:online:811097047611473951> Online : ** {statuses[0]}\n'\
+        f' **- <:idle:811097101253214209> Idle : ** {statuses[1]}\n'\
+        f' **- <:dnd:811097075756040244> Do Not Disturb : ** {statuses[2]}\n'\
+        f' **- <:offline:811097120319995905> Offline : ** {statuses[3]}\n'\
         f'**Banned Members** : {len(await ctx.guild.bans())}', False),
       ('__Channel Information__',
         f'**Channel Categories** : {len(ctx.guild.categories)}\n'\
@@ -83,7 +83,7 @@ class Info(commands.Cog):
       colour=target.colour
     )
     info_emb.set_thumbnail(url=target.avatar_url)
-    info_emb.set_footer(text=f'Member Joined At | {target.joined_at.strftime("%d/%m/%Y %H:%M:%S")}', icon_url=ctx.guild.icon_url)
+    info_emb.set_footer(text=f'Credits to: PavelDobCZ23 for the emojis!\nMember Joined At | {target.joined_at.strftime("%d/%m/%Y %H:%M:%S")}', icon_url=ctx.guild.icon_url)
     roles_str=""
     for role in target.roles:
       roles_str+=f"{role.mention}\n"
@@ -179,39 +179,36 @@ class Info(commands.Cog):
       )
     await ctx.send(embed = embed)
 
-  @commands.command()
-  async def id(self, ctx, emoji:discord.Emoji):
-    await ctx.send(emoji.id)
-
-  @commands.command()
+  @commands.command(aliases = ['ri'])
   async def roleinfo(self, ctx, role:discord.Role):
     created_at=role.created_at.strftime("%d/%m/%Y %H:%M:%S")
     embed = discord.Embed(
-      title="Role information",
+      title="Role Information",
 		  colour=role.color,
 		  timestamp=datetime.utcnow()
     )
+    embed.set_footer(text=f'Role Created At | {created_at}', icon_url=ctx.guild.icon_url)
     fields = [
       (
         "__General Info__", 
-        f"Mention: {role.mention}\n"\
-        f"Name: {role.name}\n"\
-        f"ID: {role.id}\n"\
-        f"Guild: {role.guild.name}\n"\
+        f"**Mention** : {role.mention}\n"\
+        f"**Name** : {role.name}\n"\
+        f"**ID** : `{role.id}`\n"\
+        f"**Guild**: {role.guild.name}\n"\
       , False),
       (
         "__Other Info__", 
-        f"Created at: {created_at}\n"\
-        f"Position: #{len(ctx.guild.roles)-(role.position)}\n"\
-        f"Color: {role.color}\n"\
-        f"Members: {len(role.members)}\n"\
+        f"**Created at** : `{created_at}`\n"\
+        f"**Position** : #{len(ctx.guild.roles)-(role.position)}\n"\
+        f"**Color** : `{role.color}`\n"\
+        f"**Members with Role** : {len(role.members)}\n"\
       , False),
       (
         "__Role Settings__", 
-        f"Everyone role: {role.is_default()}\n"\
-        f"Admin: {role.permissions.administrator}\n"\
-        f"Hoisted: {role.hoist}\n"\
-        f"Managed by Integration: {role.managed}\n"\
+        f"@everyone? {role.is_default()}\n"\
+        f"**Admin** : {role.permissions.administrator}\n"\
+        f"**Hoisted** : {role.hoist}\n"\
+        f"**Managed by Integration**: {role.managed}\n"\
       , False)
     ]
     for name, value, inline in fields:

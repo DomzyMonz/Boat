@@ -12,7 +12,6 @@ bot = commands.Bot(
   intents=discord.Intents.all(),
   owners=[737422322431950962,557599092931559447, 798743649809727519,726314322565005382]
 )
-bot.remove_command('help')
 
 @bot.event
 async def on_ready():
@@ -97,10 +96,30 @@ async def restart(ctx):
   await ctx.message.delete()
   os.execl(sys.executable, sys.executable, *sys.argv)
 
+@bot.event
+async def on_command_error(ctx, error):
+  if isinstance(error, commands.CommandNotFound):
+    command_list = []
+    for command in bot.commands:
+      command_list.append(str(command))
+      for alias in command.aliases:
+        command_list.append(str(alias))
+    command = (((ctx.message.content).lower()).replace('b?', '')).split(" ")[0]
+    replace = difflib.get_close_matches(command, command_list)
+    str_replace = ''
+    for _ in replace:
+      str_replace += f'**{_}**? '
+    if str_replace == '':
+      await ctx.send(f'The **{command}** command doesn\'t exist.')
+    else:
+      await ctx.send(f'The **{command}** command doesn\'t exist. Do you mean {str_replace}')
+    return
+  else:
+    raise Exception(error)
+
 for filename in os.listdir('./cogs'):
   if filename.endswith('.py'):
     bot.load_extension(f'cogs.{filename[:-3]}')
 
 letitlive.keep_alive()
 bot.run(os.environ.get("TOKEN"))
-
