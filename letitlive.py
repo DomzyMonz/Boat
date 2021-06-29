@@ -9,8 +9,11 @@ app = Flask('')
 
 @app.route('/')
 def main():
-    return "hi"
+    return 'hihihi'
 
+@app.route('/ok')
+def next():
+    return render_template('index.html')
 
 def run():
     app.run(host="0.0.0.0", port=8080)

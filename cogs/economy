@@ -151,6 +151,131 @@ class Economy(commands.Cog):
         await message.clear_reactions()
         break
 
+  @commands.command()
+  async def shop(self, ctx):
+    shoplist = []
+    rarity = ["Common", "Uncommon", "Cow Milk", "Rare"]
+    with open('json/shop.json') as f:
+      shop = json.load(f)
+    with open('json/member.json') as f:
+      points = json.load(f)
+    for keys in shop.keys():
+      shoplist.append(keys)
+    index = 0
+    while True:
+      embed = discord.Embed(
+        title = 'Shop',
+        description = f'**{shop[shoplist[index]]["name"]}**\n{shop[shoplist[index]]["lore"]}'
+      )
+      emoji = self.bot.get_emoji(shop[shoplist[index]]["emoji"])
+      embed.set_thumbnail(url = emoji.url)
+      embed.set_author(name = f'{ctx.author.name} - {points[str(ctx.author.id)]["points"]} Points', icon_url = ctx.author.avatar_url)
+      fields=[
+        ('Rarity', rarity[shop[shoplist[index]]["rarity"]], True),
+        ('Price', shop[shoplist[index]]["price"], True)
+      ]
+      for name, value, inline in fields:
+        embed.add_field(
+          name = name,
+          value = value,
+          inline = inline
+        )
+      try:
+        await message.edit(embed = embed)
+      except:
+        message = await ctx.send(embed = embed)
+      p_reactions = {
+        "0" : ['🟦', '⏺' ,'⏩'],
+        f"{len(shoplist) - 1}" : ['⏪', '⏺', '🟦'],
+      }
+      reactions = p_reactions.get(str(index), ['⏪', '⏺' ,'⏩'])
+      for _ in reactions:
+        await message.add_reaction(_)
+      def move(reaction, user):
+        return reaction.message.id == message.id and user == ctx.author and (str(reaction.emoji)) in reactions
+      try:
+        react = await self.bot.wait_for('reaction_add', check = move, timeout = 20.0)
+        if str(react[0]) == '⏩':
+          index += 1
+        elif str(react[0]) == '⏪':
+          index -= 1
+        elif str(react[0]) == '⏺':
+          number = 0
+          await message.clear_reactions()
+          reactions = ['⏺️', '0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣', '◀️', '⏪', '🔙']
+          for _ in reactions:
+            await message.add_reaction(_)
+          while True:
+            embed = discord.Embed(
+              title = 'Shop',
+              description = f'**{shop[shoplist[index]]["name"]}**\n{shop[shoplist[index]]["lore"]}'
+            )
+            emoji = self.bot.get_emoji(shop[shoplist[index]]["emoji"])
+            embed.set_thumbnail(url = emoji.url)
+            embed.set_author(name = f'{ctx.author.name} - {points[str(ctx.author.id)]["points"]} Points', icon_url = ctx.author.avatar_url)
+            fields=[
+              ('Rarity', rarity[shop[shoplist[index]]["rarity"]], True),
+              ('Price', shop[shoplist[index]]["price"], True),
+              ('Quantity', number, True),
+              ('Total', f'{number * shop[shoplist[index]]["price"]} Points ({number} * {shop[shoplist[index]]["price"]})', True)
+            ]
+            for name, value, inline in fields:
+              embed.add_field(
+                name = name,
+                value = value,
+                inline = inline
+              )
+            try:
+              await message.edit(embed = embed)
+            except:
+              message = await ctx.send(embed = embed)
+            def move(reaction, user):
+              return reaction.message.id == message.id and user == ctx.author and (str(reaction.emoji)) in reactions
+            react = await self.bot.wait_for('reaction_add', check = move)
+            if str(react[0]) == '⏺️':
+              await message.clear_reactions()
+              points[str(ctx.author.id)]["points"] -= number * shop[shoplist[index]]["price"]
+              if "inventory" not in points[str(ctx.author.id)]:
+                points[str(ctx.author.id)]["inventory"] = {}
+              for _ in shoplist:
+                if _ not in points[str(ctx.author.id)]["inventory"]:
+                  points[str(ctx.author.id)]["inventory"][_] = 0
+              points[str(ctx.author.id)]["inventory"][shoplist[index]]+= number
+              with open('json/member.json', 'w') as f:
+                json.dump (points, f)
+              embed = discord.Embed(
+                title = f'Successfully bought {number} **{shop[shoplist[index]]["name"]}** {emoji}.',
+                description = f'Points left: {points[str(ctx.author.id)]["points"]}\nTotal {shop[shoplist[index]]["name"]} {emoji}: {points[str(ctx.author.id)]["inventory"][shoplist[index]]} {shop[shoplist[index]]["name"]}'
+              )
+              await message.edit(embed = embed)
+              return
+            elif str(react[0]) == '🔙':
+              break
+            p_reactions = {
+              '0️⃣' : (number * 10) + 0,
+              '1️⃣' : (number * 10) + 1,
+              '2️⃣' : (number * 10) + 2,
+              '3️⃣' : (number * 10) + 3,
+              '4️⃣' : (number * 10) + 4,
+              '5️⃣' : (number * 10) + 5,
+              '6️⃣' : (number * 10) + 6,
+              '7️⃣' : (number * 10) + 7,
+              '8️⃣' : (number * 10) + 8,
+              '9️⃣' : (number * 10) + 9,
+              '◀️' : (number / 10),
+              '⏪' : 0,
+              '🔙' : number,
+              '⏺️' : number
+            }
+            number = int(p_reactions.get(str(react[0])))
+            if number * shop[shoplist[index]]["price"] > int(points[str(ctx.author.id)]["points"]):
+              number = int(points[str(ctx.author.id)]["points"] / shop[shoplist[index]]["price"])
+            await message.remove_reaction(str(react[0]), ctx.author)
+        await message.clear_reactions()
+      except asyncio.TimeoutError:
+        await message.delete()
+        break
+
 def setup(bot):
   bot.add_cog(Economy(bot))
   print ('Loaded Economy Cog Successfully!')

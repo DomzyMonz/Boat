@@ -1,8 +1,10 @@
 import discord
-import discord.ext
+import discord.ext as discordext
 import random
 import typing
+import requests
 import re
+import os
 import psutil
 import socket
 from platform import python_version
@@ -12,12 +14,24 @@ from PIL import ImageColor, Image
 from discord.ext import commands
 from psutil import Process, virtual_memory
 from time import time
+from xboxapi import Client
+
+key = os.environ.get("KEY")
+client = Client(api_key=key)
 
 class Info(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
-  @commands.command(aliases=["si"])
+  @commands.group(aliases = ["discord", "dd"])
+  async def d(self, ctx):
+    pass
+
+  @commands.group(aliases = ["minecraft", "mc"])
+  async def m(self, ctx):
+    pass
+    
+  @d.command(aliases=["si", "gi"])
   async def serverinfo(self, ctx):
 
     statuses = [len(list(filter(lambda m: str(m.status) == "online" and not m.bot, ctx.guild.members))),
@@ -70,13 +84,36 @@ class Info(commands.Cog):
       )
     await ctx.send(embed=info_emb)
 
-  @commands.command(aliases=["memberinfo", "ui", "mi"])
-  async def userinfo(self, ctx, target:discord.Member=None):
+  @d.command(aliases=["memberinfo", "ui", "mi"])
+  async def userinfo(self, ctx, target:discord.User=None):
     target = target if target != None else ctx.author
     status = '<:online:811097047611473951> Online' if  target.is_on_mobile()==False and str(target.status)=="online" else ('<:online_phone:811096399512338453> Online (mobile)' if  target.is_on_mobile()==True and str(target.status)=="online" else ('<:idle:811097101253214209> Idle'if target.is_on_mobile() == False and str(target.status)=="idle" else ('<:idle_phone:811096480982368316> Idle (mobile)' if target.is_on_mobile() == True and str(target.status)=="idle" else ('<:dnd:811097075756040244> Do Not Disturb'if target.is_on_mobile() == False and str(target.status)=="dnd" else ('<:dnd_phone:811096437093957692> Do not Disturb (mobile)' if target.is_on_mobile() == True and str(target.status)=="dnd" else '<:offline:811097120319995905> Offline')))))
     activity = f"{str(target.activity.type).split('.')[-1].title() if target.activity else ''} {'=' if target.activity != None else ''} {str(target.activity)}"
     flag = list(target.public_flags)
-    house = "<:hypesquad_bravery:811084230141411338> Bravery" if flag[4][1] else ("<:hypesquad_balance:811084218288439316> Balance" if flag[6][1] else ("<:hypesquad_briliance:811084170024583229> Brilliance" if flag[5][1] else "<:hypesquad_nohouse:811086260335935529> Houseless"))
+    house = "<:hypesquad_bravery:812250645868052491> Bravery" if flag[4][1] else ("<:hypesquad_balance:812250643304546314> Balance" if flag[6][1] else ("<:hypesquad_briliance:812250643665518662> Brilliance" if flag[5][1] else "Houseless"))
+    text = ''
+    if flag[0][1]:
+      text += '<:staff:812254587439808522>'
+    if flag[1][1]:
+      text += '<:partner:812254586337099806>'
+    if flag[2][1]:
+      text += '<:hypesquad_event:812250642244304896>'
+    if flag[6][1]:
+      text += '<:hypesquad_balance:812250643304546314>'
+    if flag[4][1]:
+      text += '<:hypesquad_bravery:812250645868052491>'
+    if flag[5][1]:
+      text += '<:hypesquad_briliance:812250643665518662>'
+    if flag[3][1]:
+      text += '<:bughunter:812250646748594207>'
+    if flag[10][1]:
+      text += '<:bughunter_gold:812250642848284692>'
+    if flag[7][1]:
+      text += '<:early_supporter:812258291139870740>'
+    if flag[12][1]:
+      text += '<:verified_developer:812258650172555264>'
+    if text == '':
+      text = 'No Badges'
     info_emb=discord.Embed(
       title= 'User Information',
       timestamp=datetime.utcnow(),
@@ -94,7 +131,8 @@ class Info(commands.Cog):
         f'**ID** : `{target.id}`\n'\
         f'**Hypesquad House** : {house}\n'\
         f'**Created At** : `{target.created_at.strftime("%d/%m/%Y %H:%M:%S")}`\n'\
-        f'**Bot?** {str(target.bot)+" == **Verified?** "+str(flag[12][1]) if target.bot==True else target.bot}',
+        f'**Bot?** {str(target.bot)+" == **Verified?** "+str(flag[12][1]) if target.bot==True else target.bot}\n'\
+        f'**Avatar** : {target.avatar_url}',
       False),
       ('__Status and Activity__',
         f'**Status** : {status}\n'\
@@ -112,6 +150,9 @@ class Info(commands.Cog):
         f'**Early Supporter** : {flag[7][1]}\n'\
         f'**Team User** : {flag[8][1]}\n',
       False),
+      ('__Badges__',
+        f'{text}',
+      False),
       ('__Roles__',
         f'{roles_str}',
       False)
@@ -120,7 +161,7 @@ class Info(commands.Cog):
       info_emb.add_field(name=name, value=value, inline=inline)
     await ctx.send(embed=info_emb)
 
-  @commands.command(aliases = ['stats', 'bs', 'botstats'])
+  @d.command(aliases = ['stats', 'bs', 'botstats'])
   async def botstatistics(self, ctx):
     embed = discord.Embed(
       title = 'Bot Statistics',
@@ -179,7 +220,7 @@ class Info(commands.Cog):
       )
     await ctx.send(embed = embed)
 
-  @commands.command(aliases = ['ri'])
+  @d.command(aliases = ['ri'])
   async def roleinfo(self, ctx, role:discord.Role):
     created_at=role.created_at.strftime("%d/%m/%Y %H:%M:%S")
     embed = discord.Embed(
@@ -213,6 +254,34 @@ class Info(commands.Cog):
     ]
     for name, value, inline in fields:
       embed.add_field(name=name, value=value, inline=inline)
+    await ctx.send(embed=embed)
+
+  @m.command(aliases = ['ui', 'userinfo', 'gi', 'gamertag'])
+  async def gamer(self, ctx, gamertag:str):
+    gamer = client.gamer(gamertag)
+    js = gamer.get('profile')
+    try:
+      embed = discord.Embed(title = js['Gamertag'],color=0x107c10)
+      fields = [
+        (
+          "__Info__",
+          f"**Xbox Reputation** : {js['XboxOneRep']}\n"\
+          f"**Gamerscore** : {js['Gamerscore']}\n"\
+          f"**Account Tier** : {js['AccountTier']}\n"\
+          f"**Tenure Level** : {js['TenureLevel']}\n"\
+          f"**Sponsored?** {js['isSponsoredUser']}",
+          False
+        )
+      ]
+      for name, value, inline in fields:
+        embed.add_field(
+          name = name,
+          value = value,
+          inline = inline
+        )
+      embed.set_thumbnail(url = js['GameDisplayPicRaw'])
+    except:
+        embed = discord.Embed(title = f'Error: No user with the gamertag {gamertag}',color=0x107c10)
     await ctx.send(embed=embed)
 
 def setup(bot):

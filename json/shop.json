@@ -14,5 +14,13 @@
     "price": 16,
     "stack": 1,
     "rarity": 2
+  },
+  "sheep_wool": {
+    "name": "Sheep's Wool",
+    "lore": "Fiber from the softest sheep ever!",
+    "emoji": 788844045753516034,
+    "price": 8,
+    "stack": 64,
+    "rarity": 1
   }
 }

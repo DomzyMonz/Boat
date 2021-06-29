@@ -4,14 +4,21 @@ import difflib
 import sys
 import letitlive
 import custom
+import subprocess
 from replit import db
 from discord.ext import commands
+from datetime import datetime
+from datetime import timedelta
+
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'discord_components'])
+import discord_components as dc
 
 bot = commands.Bot(
   command_prefix=['b?', 'B?'],
   intents=discord.Intents.all(),
   owners=[737422322431950962,557599092931559447, 798743649809727519,726314322565005382]
 )
+ddb = dc.DiscordComponents(bot)
 
 @bot.event
 async def on_ready():
@@ -95,27 +102,12 @@ async def list(ctx):
 async def restart(ctx):
   await ctx.message.delete()
   os.execl(sys.executable, sys.executable, *sys.argv)
-
-@bot.event
-async def on_command_error(ctx, error):
-  if isinstance(error, commands.CommandNotFound):
-    command_list = []
-    for command in bot.commands:
-      command_list.append(str(command))
-      for alias in command.aliases:
-        command_list.append(str(alias))
-    command = (((ctx.message.content).lower()).replace('b?', '')).split(" ")[0]
-    replace = difflib.get_close_matches(command, command_list)
-    str_replace = ''
-    for _ in replace:
-      str_replace += f'**{_}**? '
-    if str_replace == '':
-      await ctx.send(f'The **{command}** command doesn\'t exist.')
-    else:
-      await ctx.send(f'The **{command}** command doesn\'t exist. Do you mean {str_replace}')
-    return
-  else:
-    raise Exception(error)
+  
+@bot.command()
+async def dropdown(ctx):
+  await ctx.send(content='test',
+    components=[dc.Select(options=[dc.Option(label='Option 1', value='1'), dc.Option(label='Option 2', value = '2')])]
+  )
 
 for filename in os.listdir('./cogs'):
   if filename.endswith('.py'):

@@ -195,6 +195,23 @@ version = "0.18.2"
 
 [[package]]
 category = "main"
+description = "gTTS (Google Text-to-Speech), a Python library and CLI tool to interface with Google Translate text-to-speech API"
+name = "gtts"
+optional = false
+python-versions = ">=2.7"
+version = "2.2.2"
+
+[package.dependencies]
+click = "*"
+requests = "*"
+six = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-autobuild", "sphinx-rtd-theme", "sphinx-click", "towncrier"]
+tests = ["pytest (4.6.11)", "pytest-cov", "flake8", "testfixtures", "mock", "six"]
+
+[[package]]
+category = "main"
 description = "Internationalized Domain Names in Applications (IDNA)"
 name = "idna"
 optional = false
@@ -230,6 +247,14 @@ name = "markupsafe"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 version = "1.1.1"
+
+[[package]]
+category = "main"
+description = "Minecraft command query program. Inspired by the in-game help command, with added features like multiple version support and expandable regex search."
+name = "mccq"
+optional = false
+python-versions = ">=3.6"
+version = "1.0.2"
 
 [[package]]
 category = "main"
@@ -411,7 +436,7 @@ python-versions = "*"
 version = "2021.1.24.1"
 
 [metadata]
-content-hash = "422ae61950d03c2fc78049c79ba34e31e6a8c9953a259c1992295c1fd1c308cc"
+content-hash = "d86325f4b44468b0ccf54e1cd3afc107403fbad7981e72afe274c022f2511c5f"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -507,6 +532,10 @@ flask = [
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
 ]
+gtts = [
+    {file = "gTTS-2.2.2-py3-none-any.whl", hash = "sha256:10efdecde4e272dee48ef0e8aa217de7f0bd5f914c368a92a6a14edbc0cd9cff"},
+    {file = "gTTS-2.2.2.tar.gz", hash = "sha256:b53714d8377afb66df9f112158a6a832de26bc72cee3b8af321575d85f820a0f"},
+]
 idna = [
     {file = "idna-3.1-py3-none-any.whl", hash = "sha256:5205d03e7bcbb919cc9c19885f9920d622ca52448306f2377daede5cf3faac16"},
     {file = "idna-3.1.tar.gz", hash = "sha256:c5b02147e01ea9920e6b0a3f1f7bb833612d507592c837a6c49552768f4054e1"},
@@ -572,6 +601,10 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp39-cp39-win32.whl", hash = "sha256:22c178a091fc6630d0d045bdb5992d2dfe14e3259760e713c490da5323866c39"},
     {file = "MarkupSafe-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:b7d644ddb4dbd407d31ffb699f1d140bc35478da613b441c582aeb7c43838dd8"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
+]
+mccq = [
+    {file = "mccq-1.0.2-py3-none-any.whl", hash = "sha256:abfad271f10b3a77149276024de35f82b56732df280f206335a15a539f3f5c54"},
+    {file = "mccq-1.0.2.tar.gz", hash = "sha256:13c29a494f0c467fe6cbd0d3be02e2dfdc9bcf9d1edeb5c1bb259cb742c44db3"},
 ]
 mcstatus = [
     {file = "mcstatus-5.1.1-py3-none-any.whl", hash = "sha256:fe0926057860e7d02809ddd5930748c8ad24bcded17ec74a4af9b4e2bec6a23b"},

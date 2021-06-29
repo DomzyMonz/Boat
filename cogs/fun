@@ -69,12 +69,12 @@ class Fun(commands.Cog):
   async def imagewrite(self, ctx, text, hexcolor = '#ffffff'):
     wide = 599
     hexcolor = getrgb(hexcolor)
-    for x in range((len(text) // 18)):
-      text = text[:(18 * x)] + '\n' + text[(18 * x):]
+    for x in range((len(text) // 48)):
+      text = text[:(48 * x)] + '\n' + text[(48 * x):]
     barframe = Image.new('RGB', (620,60), color = (9, 80, 78))
     notbar = Image.new('RGB', (600,40), color = (90 , 90, 225))
     bar = Image.new('RGB', (wide,40), color = (30, 30, 225))
-    out = Image.new("RGB", (2568, 1440), hexcolor)
+    out = Image.new("RGB", (1440, 1440), hexcolor)
     fnt = ImageFont.truetype("font/Minecraftia-Regular.ttf", 40)
     d = ImageDraw.Draw(out)
     d.multiline_text((10,40), text, font=fnt, fill=(0, 0, 0))

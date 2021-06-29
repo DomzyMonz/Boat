@@ -12,6 +12,8 @@ from PIL import Image
 from PIL import ImageColor
 from discord.ext import commands, tasks
 from mcstatus import MinecraftServer
+import gtts
+from gtts import gTTS
 
 
 '''    activeservers = list(self.bot.guilds)
@@ -225,8 +227,7 @@ class Test(commands.Cog):
   async def test5 (self, ctx, user:discord.Member, *message):
     message = ' '.join(message)
     message = message.replace('b? ', 'b?')
-    dm = await user.create_dm()
-    await dm.send(message)
+    await user.send(message)
   
   @commands.command()
   async def test6(self, ctx):
@@ -251,17 +252,6 @@ class Test(commands.Cog):
       text += (''.join(_)) + '\n'
     message = await ctx.send (text)
 
-  @commands.Cog.listener()
-  async def on_message(self, message):
-    mention = '<@!416147488643481610>'
-    if mention in message.content:
-      await message.channel.send("You mentioned him")
-      with open('json/cooldown.json') as f:
-        cooldown = json.load(f)
-      cooldown["last"] = str(datetime.datetime.now())
-      with open('json/cooldown.json', 'w') as f:
-        json.dump(cooldown, f)
-
   @commands.command()
   async def test7(self, ctx):
     command_list = []
@@ -270,17 +260,22 @@ class Test(commands.Cog):
       for alias in command.aliases:
         command_list.append(str(alias))
     await ctx.send(command_list)
-
+  
   @commands.command()
-  async def test8(self, ctx, a, b, c:str=None):
-    pass
+  async def test8(self, ctx, user:discord.User):
+    profile = await commands.Bot.fetch_user_profile(self, user_id = user.id)
+    await ctx.send(profile)
+  
+  @commands.command()
+  async def nick(self, ctx, nick):
+    member = ctx.guild.get_member(813035139672047668)
+    await member.edit(nick = nick)
   
   @tasks.loop(seconds=60)
   async def colour_change():
     with open('json/cooldown.json') as (f):
       cooldown = json.load(f)
     print ((datetime.datetime.now() - datetime.datetime.strptime(cooldown["last"], '%Y-%m-%d %H:%M:%S.%f')))
-
     
 def setup(client):
   client.add_cog(Test(client))
